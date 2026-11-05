@@ -12,20 +12,19 @@ public class Main {
         MemberRepository memberRepo = new MemberRepository();
 
 
-        try{
-            int id = memberRepo.create("Sara Lind", "sara@example.com");
-            System.out.println("Ny medlem med id: " +id);
+     try{
 
-            int updated = memberRepo.updateEmail(id, "sara.lind@example.com");
-            System.out.println(updated + " rad ändrad");
-
-            int deleted = memberRepo.delete(id);
-        } catch(SQLException e){
-            System.out.println("Databasfel: "+ e.getMessage());
-        }
+         memberRepo.create("Anna Igen", "anna@example.com");
 
 
 
+     }catch(SQLException e){
+         if("23505".equals(e.getSQLState())){
+             System.out.println("E-posten finns redan");
+         }else{
+             System.out.println("Databasfel: " + e.getMessage());
+         }
+     }
 
 
 
