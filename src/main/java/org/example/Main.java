@@ -9,23 +9,26 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        MemberRepository memberRepo = new MemberRepository();
+        BookingService bookingService = new BookingService();
 
 
-     try{
+        try {
+            // Billy books Styrka
+            boolean ok = bookingService.book(4, 3);
 
-         memberRepo.create("Anna Igen", "anna@example.com");
+            System.out.println(ok ? "Bokad" : "Passet är fullt");
 
 
+            //Billy books Spinning
 
-     }catch(SQLException e){
-         if("23505".equals(e.getSQLState())){
-             System.out.println("E-posten finns redan");
-         }else{
-             System.out.println("Databasfel: " + e.getMessage());
-         }
-     }
+            ok = bookingService.book(4, 1);
 
+            System.out.println(ok ? "Bokad" : "Passet är fullt");
+
+
+        } catch (SQLException e) {
+            System.out.println("Databasfel: " + e.getMessage());
+        }
 
 
     }
