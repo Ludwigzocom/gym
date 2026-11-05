@@ -11,14 +11,15 @@ import java.util.List;
 public class MemberRepository {
 
     public record Member(int id,
-                         String name, String email) {}
+                         String name, String email) {
+    }
 
     public List<Member> findAll() throws SQLException {
         String sql = """
-        SELECT id, name, email
-        FROM members
-        ORDER BY name
-        """;
+                SELECT id, name, email
+                FROM members
+                ORDER BY name
+                """;
         List<Member> members = new ArrayList<>();
         try (Connection conn = Db.getConnection();
              Statement stmt = conn.createStatement();
@@ -28,6 +29,7 @@ public class MemberRepository {
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getString("email")));
+
             }
         }
         return members;
@@ -51,4 +53,53 @@ public class MemberRepository {
             }
         }
     }
+
+
+    public int create(String name, String email) throws SQLException {
+
+        String sql = "INSERT INTO members (name, email) VALUES (?,?)";
+
+        try (Connection conn = Db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, name);
+            ps.setString(2, email);
+            ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return keys.getInt("id");
+            }
+
+        }
+
+
+    }
+
+    public int updateEmail(int id, String newEmail) throws SQLException {
+
+        String sql = "UPDATE members SET email = ? WHERE id = ?";
+
+        try (Connection conn = Db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, newEmail);
+            ps.setInt(2, id);
+            return ps.executeUpdate();
+
+
+        }
+    }
+
+    public int delete(int id) throws SQLException {
+        String sql = "DELETE FROM members WHERE id = ?";
+
+        try (Connection conn = Db.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate();
+        }
+
+    }
+
+
 }
